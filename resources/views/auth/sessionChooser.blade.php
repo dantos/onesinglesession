@@ -2,11 +2,12 @@
 @section('content')
 
 <div class="row">
-    <div class="col-xs-12">
+    <div class="col-sm-12">
         <div class="container chooser-container">
             <div class="session-message-container">
                 <p class="session-message">
                     This system is open in another window or device.
+                    <br>
                     Click <strong>«Use Here»</strong> to use it in this window.
                 </p>
                 <a href="#" class="btn btn-danger"
