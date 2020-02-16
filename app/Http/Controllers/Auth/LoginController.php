@@ -3,7 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use Illuminate\View\View;
 
 class LoginController extends Controller
 {
@@ -36,4 +42,32 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+	/**
+	 * @param Request $request
+	 * @param $user
+	 *
+	 * @return Factory|RedirectResponse|View
+	 */
+	protected function authenticated( Request $request, $user ) {
+
+		$sessionId     = Session::getId();
+		$lastSessionId = $user->last_session_id;
+
+		if ( ! empty( $lastSessionId ) ) {
+			$lastSession = Session::getHandler()->read( $lastSessionId ); // retrieve last session
+			if ( $lastSession ) {
+				Session::put( 'multiple_session_flag', [ 'active' => '1', 'request_time' => Carbon::now() ] );
+
+				return view( 'auth.sessionChooser' );
+			}
+		}
+
+		$user->last_session_id = $sessionId;
+		$user->save();
+
+		return redirect()->intended( $this->redirectPath() );
+	}
+
+
 }

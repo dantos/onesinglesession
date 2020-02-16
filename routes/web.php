@@ -14,3 +14,8 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->middleware('auth.active.session')->name('home');
+Route::post('/login/continue', 'HomeController@chooseCurrentSession')->name('login.continue');
